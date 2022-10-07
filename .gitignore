@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# Materials
+Complete Tensorflow 2 and Keras Deep Learning Bootcamp-Jose Portilla/Materials/
