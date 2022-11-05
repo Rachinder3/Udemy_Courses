@@ -1,0 +1,7 @@
+Goals:
+    Understand CV applications
+    Learn Open CV
+    Create applications with this understanding
+
+
+
