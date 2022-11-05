@@ -4,4 +4,167 @@ Goals:
     Create applications with this understanding
 
 
+To create environment and install dependencies in a yaml file:
+    conda env create -f "Yaml name" 
+
+
+==============================================================
+
+
+Section 2: 
+
+Numpy and Image basics
+
+
+]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+
+Numpy arrays:
+
+Importing:
+
+
+import numpy as np
+
+
+
+
+
+arange :
+
+np.arange(0,10)
+
+
+
+zeroes:
+
+np.zeros((5,5))
+
+
+
+setting seed:
+
+
+np.random.seed(101) 
+arr = np.random.randint(0,100,10)
+
+
+
+max:
+arr.max()
+
+
+argmax:
+
+arr.argmax()
+
+
+reshape:
+
+arr.reshape(2, -5)
+
+
+
+Indexing:
+
+max[0,1]
+
+
+mat[0:3, 0:3]
+
+
+
+
+copy: does deep copy
+
+]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+
+What is an image:
+
+
+How does computer identify image??
+
+Each image can be represented as an array.
+
+How dark a pixel can be represented as a value b/w 0 and 1
+
+Default images have values b/w 0 and 255
+
+The range 0 to 255 has to do with how computers store 8-bit numbers
+
+To normalize these values, we divide by 255.
+
+
+
+Color images: 
+
+Color images can be represented in 3 channels : Red, Green, Blue
+
+RGB allows us to produce a range of colors.
+
+Each channel will have different intensity of that color.
+
+The shape of these image arrays have 3 dimensions:
+    height, width and color channels
+
+
+Computer won't know a channel us RED, it just knows that there are 3 different channels.
+
+The user dictates which channel is which. Each channel alone is a essentially same as greyscale image.
+
+
+]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+
+Images and Numpy:
+
+
+### If we plot the path instead of image iteself, this error is encountered. Instead load the image first
+
+
+
+
+
+## Will mostly use Open CV, for now using PIL.Image class instead
+
+
+
+
+
+from PIL import Image
+pic = Image.open(path)
+
+
+
+
+## Should use imread function of matplotlib to read this, no need to use the above one
+
+img = plt.imread(path)  ## This will work fine
+
+
+## If using Image class, use asarray function to convert to array
+
+
+
+## working on individual channles
+
+r = img[:,:,0]
+g = img[:,:,1]
+b = img[:,:,2]
+
+
+plt.imshow(r, cmap='binary')
+
+
+pic_red = img.copy()
+
+pic_red[:, :, 1] = 0    # Zero out contribution from green
+pic_red[:, :, 2] = 0    # Zero out contribution from blue
+
+
+plt.imshow(pic_red)
+
+//////////////////////////////////////////////////////////////////////////
+
 
