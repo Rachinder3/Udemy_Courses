@@ -168,3 +168,535 @@ plt.imshow(pic_red)
 //////////////////////////////////////////////////////////////////////////
 
 
+
+============================================================================
+
+Section 3:
+Image Basics with Open CV
+
+Introduction:
+
+
+Open CV:
+    library of programming functions aimed at real-time Computer Vision
+
+    Created by Intel in 1999, written in CPP
+
+    Still really popular in CPP
+
+
+    Contains many popular algos for CV, including objefct detection
+
+    
+Section Agenda: 
+
+    Open image files with Open CV be it with ipynb notebooks or python script
+
+    Draw simple geometries on images(ex: draw Bounding boxes while doing Object Detection/ Tracking)
+
+    Directly interact with an image through callbacks
+
+
+
+
+Object Tracking: Continuous detection of same object in video
+
+Object Detection: Object Detection in a single frame
+
+
+
+///////////////////////////////////////////////////////////////
+
+
+
+
+path = r"C:\\Users\\rachi\\Desktop\\Udemy_Courses\\Python for Computer Vision with OpenCV and Deep Learning\\Materials\\Computer-Vision-with-Python\\DATA\\00-puppy.jpg"
+
+
+Opening images in notebooks with Open CV:
+
+
+
+
+importing: 
+
+import cv2
+
+
+
+
+Loading images:
+
+path = 'wrong_path'
+cv2.imread(path)  ## even though path is wrong, doesn't generate error. Gives none instead
+### This can lead to errors so we should check type of image after loading before going ahead
+
+
+
+path = r"C:\\Users\\rachi\\Desktop\\Udemy_Courses\\Python for Computer Vision with OpenCV and Deep Learning\\Materials\\Computer-Vision-with-Python\\DATA\\00-puppy.jpg"
+
+img = cv2.imread(path)
+
+img  ## Outputs the image as a numpy array
+
+
+
+
+*** By default channels in Open CV are BGR and not RGB
+
+
+The image has been correctly loaded by openCV as a 
+numpy array, but the color of each pixel has been 
+sorted as BGR.
+
+Matplotlib's plot expects an RGB image so, 
+for a correct display of the image, it is 
+necessary to swap those channels. 
+
+This operation can be done either by using 
+openCV conversion functions cv2.cvtColor() or 
+by working directly with the numpy array.
+
+
+
+
+
+cv2.cvtColor():
+
+takes image array and code for conversion.
+
+codes need to be integers.
+
+They are there by default in cv2 library. cv2.COLOR_BGR2RBG, converts images from BGR to RGB
+
+
+Ex:
+
+img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+
+
+Reading img as greyscale:
+
+## Read in greyscale altogether, instead of doing conversion
+
+img_grey_scale = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+
+plt.imshow(img_grey_scale, cmap = 'gray')
+
+
+
+
+
+
+Reshaping images:
+
+
+img_reshaped = cv2.resize(img, (800,400)) ## ** 800 is resizing for 1950 instead of 1300, cv2 takes it opposite
+
+
+plt.imshow(img_reshaped)
+
+
+
+
+### with ratios
+
+## function footprint is wierd here
+
+
+w_ratio = 0.5
+h_ratio = 0.5
+
+### reducing image by 50 %
+
+new_img = cv2.resize(img, (0,0), img,w_ratio, h_ratio)
+
+## first take (0,0) then pass image again and then pass ratios
+
+
+
+
+## flipping images
+
+flip(src, flipCode[, dst]) -> dst
+.   @brief Flips a 2D array around vertical, horizontal, or both axes.
+
+
+
+
+flipped_img = cv2.flip(img, 0)  ### returns water image
+
+flipped_img = cv2.flip(img, 1) ### return mirror Image
+
+
+flipped_img = cv2.flip(img, -1)  ### flips across both axes
+
+
+### These can help in Data Augmenatation
+
+
+
+
+
+Saving image files
+
+
+Use cv2.imwrite() function
+
+### This will store the BGR version of Image
+
+
+
+Larger displays in notebooks
+
+fig = plt.figure(figsize=(10,8))
+ax = fig.add_subplot(111)
+ax.imshow(new_img)
+
+
+
+Opening images out of jupyter notebooks
+
+
+Sometimes we want to use opencv on its own to display images in 
+their own window.
+
+Often jupyter interferes with closing of window.
+
+
+
+
+
+import cv2
+
+img = cv2.imread(path)
+
+while True:
+    cv2.imshow('Puppy',img) ## see, we are using cv2's imshow instead of matplotlib's imshow
+    
+    ## explanation for this line
+    # https://stackoverflow.com/questions/35372700/whats-0xff-for-in-cv2-waitkey1/39201163
+    
+    if cv2.waitKey(1) & 0xFF == 27: # IF we've waited at least 1 ms AND we've pressed the Esc
+        break
+
+cv2.destroyAllWindows()
+
+
+### we can't resize this image in seperate window
+
+## 27 is the number of escape key
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+Drawing on images
+
+
+generating blank image:
+
+blank_img = np.zeros((512,512,3), dtype = 'int16')
+
+
+
+rectangle:
+
+cv2.rectangle
+
+
+
+rectangle(img, pt1, pt2, color[, thickness[, lineType[, shift]]])
+
+
+Ex:
+
+rect_img = cv2.rectangle(blank_img, pt1= (0,0),pt2=(510,128), color = (122,131,21), thickness=5)
+
+
+## directly adds in the image inplace
+
+
+
+********
+### while drawing figures in images using cv2
+
+coordinates given as x,y
+
+x is the horizontal axis and y is vertical axis. starts from left 
+
+Better to leave axis on as it shows x and y axis.  starts from top and not bottom.
+
+
+While giving color, we use rgb code only
+
+******
+Great idea to keep axis on and use it for reference
+
+
+
+Circles:
+
+circle(img, center, radius, color[, thickness[, lineType[, shift]]]) -> img
+.   @brief Draws a circle.
+.   
+.   The function cv::circle draws a simple or filled circle with a given center and radius.
+.   @param img Image where the circle is drawn.
+.   @param center Center of the circle.
+.   @param radius Radius of the circle.
+.   @param color Circle color.
+.   @param thickness Thickness of the circle outline, if positive. Negative values, like #FILLED,
+.   mean that a filled circle is to be drawn.
+.   @param lineType Type of the circle boundary. See #LineTypes
+.   @param shift Number of fractional bits in the coordinates of the center and in the radius value.
+
+
+Normal circle
+cv2.circle(blank_img, center = (100, 400), radius = 100, thickness = 2, color = (255,0,0))
+
+
+Filled in circle:  Give thickness as -1
+cv2.circle(img=blank_img,center=(100,100), radius=100, color = (0,255,0),thickness=-1)
+
+
+
+
+Lines:
+
+line(img, pt1, pt2, color[, thickness[, lineType[, shift]]]) -> img
+.   @brief Draws a line segment connecting two points.
+.   
+.   The function line draws the line segment between pt1 and pt2 points in the image. The line is
+.   clipped by the image boundaries. For non-antialiased lines with integer coordinates, the 8-connected
+.   or 4-connected Bresenham algorithm is used. Thick lines are drawn with rounding endings. Antialiased
+.   lines are drawn using Gaussian filtering.
+.   
+.   @param img Image.
+.   @param pt1 First point of the line segment.
+.   @param pt2 Second point of the line segment.
+.   @param color Line color.
+.   @param thickness Line thickness.
+.   @param lineType Type of the line. See #LineTypes.
+.   @param shift Number of fractional bits in the point coordinates.
+
+
+cv2.line(img = blank_img, pt1 = (0,0), pt2 = (511,511), color = (200,200,200), thickness=4)
+
+
+
+
+Text:
+
+Docstring:
+putText(img, text, org, fontFace, fontScale, color[, thickness[, lineType[, bottomLeftOrigin]]]) -> img
+.   @brief Draws a text string.
+.   
+.   The function cv::putText renders the specified text string in the image. Symbols that cannot be rendered
+.   using the specified font are replaced by question marks. See #getTextSize for a text rendering code
+.   example.
+.   
+.   @param img Image.
+.   @param text Text string to be drawn.
+.   @param org Bottom-left corner of the text string in the image.
+.   @param fontFace Font type, see #HersheyFonts.
+.   @param fontScale Font scale factor that is multiplied by the font-specific base size.
+.   @param color Text color.
+.   @param thickness Thickness of the lines used to draw a text.
+.   @param lineType Line type. See #LineTypes
+.   @param bottomLeftOrigin When true, the image data origin is at the bottom-left corner. Otherwise,
+.   it is at the top-left corner.
+
+
+## First specify the font
+
+font = cv2.FONT_HERSHEY_DUPLEX
+
+## can see other fonts just have to use intelliprompt on cv.COLOR_BGR2RBG
+
+cv2.putText(blank_img, text = "RACHin", org=(400,200), fontFace=font, fontScale=1, thickness=4, lineType=cv2.LINE_4, color = (255,255,255))
+
+## for line as well, we need to use intelliprompt
+
+
+
+
+custom polygon:
+
+cv2.polylines:
+
+Docstring:
+polylines(img, pts, isClosed, color[, thickness[, lineType[, shift]]]) -> img
+.   @brief Draws several polygonal curves.
+.   
+.   @param img Image.
+.   @param pts Array of polygonal curves.
+.   @param isClosed Flag indicating whether the drawn polylines are closed or not. If they are closed,
+.   the function draws a line from the last vertex of each curve to its first vertex.
+.   @param color Polyline color.
+.   @param thickness Thickness of the polyline edges.
+.   @param lineType Type of the line segments. See #LineTypes
+.   @param shift Number of fractional bits in the vertex coordinates.
+
+
+
+
+
+blank_img = np.zeros((512,512,3))
+
+
+
+### decide vertices first, make sure vertices make sense
+vertices = np.array([[100,400],[200,200],[400,400]])
+
+
+## open cv wants these vertices in a specific order.
+
+## Always these dimensions are used. We reshape to (-1,1,2)
+
+pts = vertices.reshape(-1,1,2)  ## this is just adding dimension on 2nd axis. 1st axis contains number of point, 3 rd dimension contains the data for that point
+
+
+## we have to pts as list. so we enclose pts around square brackets
+cv2.polylines(blank_img, pts = [pts], isClosed= True, color = (123,53,123), thickness=5)
+
+
+
+
+Majorly we use cv2.rectangle to draw Bounding boxes around objects.
+
+
+////////////////////////////////////////////////////////////////
+
+Direct drawing on images with a mouse:
+
+
+can use callbacks to connect images to event functions with Open CV.
+
+This allows us to directly interact with images (later on videos)
+
+
+
+3 parts:
+    Connecting callback functions
+    
+    Adding Functionality throgh Event choices
+
+    Dragging the mouse for Functionality
+
+
+
+
+
+#### Function
+def draw_circle(event, x, y, flags, params):   ### event: automatically passed. x,y : current coordinates of the mouse
+    if event == cv2.EVENT_LBUTTONDOWN:  ### draw as soon as we clicked down
+        cv2.circle(img, (x,y), 100,(0,255,0), -1)
+
+
+### connect function to the callback
+
+cv2.namedWindow(winname="my_drawing") # This names the window so we can reference it 
+
+cv2.setMouseCallback('my_drawing',draw_circle) # Connects the mouse button to our callback function
+
+
+img = np.zeros((512,512,3), dtype = np.int8)  ## blank image
+
+while True:
+    cv2.imshow("my_drawing", img)
+    
+    if cv2.waitKey(20) & 0xFF == 27:  ### my understanding of waitKet: like heartbeat
+        break
+cv2.destroyAllWindows()
+
+
+
+In markdown:  ----  draws a line
+
+
+
+
+
+***** to list down all the events: use intelliprompt, simply type: cv2.EVENT
+
+
+
+
+
+event calls for mouse dragging:
+
+
+
+
+import cv2
+import numpy as np
+
+
+# Create a function based on a CV2 Event (Left button click)
+drawing = False # True if mouse is pressed
+ix,iy = -1,-1
+
+# mouse callback function
+def draw_rectangle(event,x,y,flags,param):
+    global ix,iy,drawing,mode
+
+    if event == cv2.EVENT_LBUTTONDOWN:
+        # When you click DOWN with left mouse button drawing is set to True
+        drawing = True
+        # Then we take note of where that mouse was located
+        ix,iy = x,y
+
+    elif event == cv2.EVENT_MOUSEMOVE:
+        # Now the mouse is moving
+        if drawing == True:
+            # If drawing is True, it means you've already clicked on the left mouse button
+            # We draw a rectangle from the previous position to the x,y where the mouse is
+            cv2.rectangle(img,(ix,iy),(x,y),(0,255,0),-1)
+           
+
+    elif event == cv2.EVENT_LBUTTONUP:
+        # Once you lift the mouse button, drawing is False
+        drawing = False
+        # we complete the rectangle.
+        cv2.rectangle(img,(ix,iy),(x,y),(0,255,0),-1)
+        
+        
+
+# Create a black image
+img = np.zeros((512,512,3), np.uint8)
+# This names the window so we can reference it 
+cv2.namedWindow(winname='my_drawing')
+# Connects the mouse button to our callback function
+cv2.setMouseCallback('my_drawing',draw_rectangle)
+
+while True: #Runs forever until we break with Esc key on keyboard
+    # Shows the image window
+    cv2.imshow('my_drawing',img)
+    # EXPLANATION FOR THIS LINE OF CODE:
+    # https://stackoverflow.com/questions/35372700/whats-0xff-for-in-cv2-waitkey1/39201163
+    
+    # CHECK TO SEE IF ESC WAS PRESSED ON KEYBOARD
+    if cv2.waitKey(1) & 0xFF == 27:
+        break
+# Once script is done, its usually good practice to call this line
+# It closes all windows (just in case you have multiple windows called)
+cv2.destroyAllWindows()
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////
+
+
+fillpoly:
+
+instead of polylines, can use this to create filled out polygon
+
+/////////////////////////////////////////////////////////////////////////
+
+
+
