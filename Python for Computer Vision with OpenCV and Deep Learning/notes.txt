@@ -699,4 +699,263 @@ instead of polylines, can use this to create filled out polygon
 /////////////////////////////////////////////////////////////////////////
 
 
+===================================================================
+
+Section 4:
+
+Image Processing
+
+Agenda:
+
+    Learn various Image Processing Operations
+
+    Perform Image operations such as Smoothening, Blurring, Morphological Operations
+
+    Grab Properties such as color spaces and histograms
+
+
+////////////////////////////////////////////////////////////////////
+
+
+Color mappings:
+
+So far only worked with RGB color model
+
+colors modeled in combonation of Red, Green and Blue. But very old. 
+
+
+In 1970 , HSL (Hue, Saturation, Lightness) and HSV (Hue, Saturation, Value) 
+were developed as alternative color models
+
+
+HSL and HSV are more closely alligned with how humans preceive color
+
+We normally work with RGB but generally its a good idea to know how to work with HSV as well
+
+
+
+
+HSL/V is like a cyllinderical model 
+  
+
+Hue: Color at any pixel
+
+Saturation: How much Hue (white on inside and color on outsuide)
+
+Lightness: Darkness of that color (black at bottom, white at top)
+
+RGB model: https://en.wikipedia.org/wiki/RGB_color_model
+
+HSV model: https://en.wikipedia.org/wiki/HSL_and_HSV
+
+
+
+Code:
+
+
+## To HSV
+img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+## To HSL
+img = cv2.imread(path)
+img = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
+
+
+
+Images here are not making much sense as original images are not coded in this way
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+
+Blending and pasting:
+
+
+Often we work with multiple images.
+
+OpenCV has many methods of blending images together and pasting images on top of 
+each other.
+
+
+Blending images is done via the addWeighted function of Open CV.
+
+It uses both images and combine them.
+
+
+For some computer vision systems, we'll want to be able to 
+post our own image on top of an already existing image or 
+video. We may also want to blend images, maybe we want to 
+have a "highlight" effect instead of just a solid box or 
+empty rectangle.
+
+Let's explore what is commonly known as **Arithmetic Image 
+Operations** with OpenCV. These are referred to as Arithmetic 
+Operations because OpenCV is simply performing some common 
+math with the pixels for the final effect. 
+We'll see a bit of this in our code.
+
+****
+For each pixel:
+We add some sort of weight to each image's pixel to create a new pixel.
+
+new_pixel = alpha * pixel1 + beta * pixel2 + gamma
+
+
+
+
+Code:
+
+## Different sized images can create problems. We have to create masks to operate in such scenarios
+## Right now not creating mask, rather simply resizing the images
+
+
+
+img1 =cv2.resize(img1,(1200,1200))
+img2 =cv2.resize(img2,(1200,1200))
+
+
+
+blended_img = cv2.addWeighted(src1=img1, alpha=0.7, src2 = img2, beta= 0.5, gamma = 0.3)
+
+plt.imshow(blended_img)
+
+
+
+## Overlay images of different sizes
+
+## overlay small image on top of larger image (No Blending)
+
+## This is not blending, we are simply adding small imaqge on top of large image
+
+img1 = cv2.imread(path1)
+img2 = cv2.imread(path2)
+img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2RGB)
+img2 =cv2.resize(img2,(600,600))
+
+
+
+large_img = img1
+small_img = img2
+
+x_offset = 0
+y_offset = 0
+
+
+large_img[y_offset:y_offset+small_img.shape[0],x_offset:x_offset+small_img.shape[1]] = small_img
+
+#### This is tricky, numpy thinks horizontal row as 2nd axis whereas open cv thinks horizontal row as 1st axis
+
+
+plt.imshow(large_img)
+
+
+/////////////////////////////////////////////////////////
+
+
+## Blending images of Different sizes
+
+
+
+What if we want to mask part of smaller image??
+
+ Image  -------> Create MASK ------> Img2 with masked img1
+
+
+Quite complicated synatx
+
+///////////////////////////////////////////////////////////
+
+
+
+Image Thresholding
+
+
+
+In some CV applications, it is often necessary to convert color 
+images to greyscale, since only edges and shapes end up beinmg important
+
+
+Simmilarly some applications only require a binary image showing general shapes.
+
+
+Thresholding is a very simple method of segmenting an image in different parts.
+
+Thresholding will convert an image to consist of only 2 values, white or black
+
+
+
+cv2.threshold:
+
+
+threshold(src, thresh, maxval, type[, dst]) -> retval, dst
+.   @brief Applies a fixed-level threshold to each array element.
+.   
+.   The function applies fixed-level thresholding to a multiple-channel array. The function is typically
+.   used to get a bi-level (binary) image out of a grayscale image ( #compare could be also used for
+.   this purpose) or for removing a noise, that is, filtering out pixels with too small or too large
+.   values. There are several types of thresholding supported by the function. They are determined by
+.   type parameter.
+.   
+.   Also, the special values #THRESH_OTSU or #THRESH_TRIANGLE may be combined with one of the
+.   above values. In these cases, the function determines the optimal threshold value using the Otsu's
+.   or Triangle algorithm and uses it instead of the specified thresh.
+.   
+.   @note Currently, the Otsu's and Triangle methods are implemented only for 8-bit single-channel images.
+.   
+.   @param src input array (multiple-channel, 8-bit or 32-bit floating point).
+.   @param dst output array of the same size  and type and the same number of channels as src.
+.   @param thresh threshold value.
+.   @param maxval maximum value to use with the #THRESH_BINARY and #THRESH_BINARY_INV thresholding
+.   types.
+.   @param type thresholding type (see #ThresholdTypes).
+.   @return the computed threshold value if Otsu's or Triangle methods used.
+
+
+
+Ex:
+
+Binary Threshold:
+
+converts everything below threshold value to 0 and everything above to 1.
+
+Normally half way mark is chosen as threshold.
+
+ret, thresh1 = cv2.threshold(src = img, thresh= 127, maxval=255, type=cv2.THRESH_BINARY)
+
+
+plt.imshow(thresh1, cmap = 'gray')
+
+
+
+
+Binary Inverse:
+
+Opposite of Binary Thresholding
+
+ret, thresh1 = cv2.threshold(src = img, thresh= 127, maxval=255, type=cv2.THRESH_BINARY_INV)
+
+
+
+Threshold trunc:
+
+If value is greater than threshold, make the value equal to threshold.
+
+If value is lesser than threshold, retain the value
+
+ret, thresh1 = cv2.threshold(src = img, thresh= 127, maxval=255, type=cv2.THRESH_TRUNC)
+
+
+
+
+Thresh to zero:
+
+Inverse of trucation.
+
+If value > threshold retain the value
+
+Else make the value == threshold
+
+
 
