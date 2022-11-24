@@ -1,0 +1,65 @@
+*****
+https://strftime.org/
+
+*****
+
+
+codes for working with datetime
+
+
+
+
+Files
+
+
+Jupyter notebook magic command
+
+%%writefile test.txt
+Hi, My name is Rachinder
+I want to learn NLP
+
+
+
+
+
+PDFs:
+
+PyPDF2 library is used.
+
+
+
+f = open("Business_Proposal.pdf", mode = "rb")
+pdf_reader = PyPDF2.PdfFileReader(f)
+
+
+
+### extracting text 
+
+page_one = pdf_reader.getPage(0)
+page_one.extractText()
+
+
+
+
+
+
+Regular Expressions
+
+
+allow for pattern search in text document
+
+
+
+
+search function: searches for a particular pattern in given string
+
+only returns the 1st match
+
+
+
+for all matches:
+re.findall()
+
+
+
+

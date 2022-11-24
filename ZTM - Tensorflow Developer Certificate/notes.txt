@@ -1,0 +1,55 @@
+
+
+notes: https://dev.mrdbourke.com/tensorflow-deep-learning/
+
+github repo: https://github.com/mrdbourke/tensorflow-deep-learning
+
+
+
+ML: 
+
+turning things(data) to numbers and finding patterns within them
+
+
+
+
+Why use ML (DL)
+
+
+reason: For a complex problem, its not possible for us to think of all the rules.
+On the other hand computers are powerfull enough to do this for us.
+
+
+
+Dont use ML, if you dont need to and use case can be solved with simple rule based systems.
+
+
+
+google ML handbook:  https://developers.google.com/machine-learning/guides/rules-of-ml
+
+
+
+
+Where DL fails:
+
+1) Black Box
+
+2) When traditional approach is better option
+
+3) When errors are unacceptable
+
+4) When you dont have much data :  will see how to circumvent this
+
+
+
+
+ML: works on structured data
+DL: generally used for unstructured data
+
+
+
+
+
+
+
+
